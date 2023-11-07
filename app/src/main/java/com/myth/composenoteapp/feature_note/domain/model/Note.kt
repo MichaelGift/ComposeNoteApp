@@ -2,12 +2,13 @@ package com.myth.composenoteapp.feature_note.domain.model
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.myth.composenoteapp.ui.theme.Pink40
-import com.myth.composenoteapp.ui.theme.Pink80
-import com.myth.composenoteapp.ui.theme.Purple40
-import com.myth.composenoteapp.ui.theme.Purple80
-import com.myth.composenoteapp.ui.theme.PurpleGrey40
-import com.myth.composenoteapp.ui.theme.PurpleGrey80
+import com.myth.composenoteapp.ui.theme.boldPurple
+import com.myth.composenoteapp.ui.theme.energeticRed
+import com.myth.composenoteapp.ui.theme.livelyTeal
+import com.myth.composenoteapp.ui.theme.playfulGreen
+import com.myth.composenoteapp.ui.theme.radiantOrchid
+import com.myth.composenoteapp.ui.theme.sunnyYellow
+import com.myth.composenoteapp.ui.theme.vibrantOceanBlue
 
 
 @Entity
@@ -19,7 +20,14 @@ data class Note(
     val color: Int
 ) {
     companion object {
-        val noteColors = listOf(Pink40, Pink80, Purple40, Purple80, PurpleGrey40, PurpleGrey80)
+        val noteColors = listOf(
+            vibrantOceanBlue,
+            livelyTeal,
+            radiantOrchid,
+            energeticRed,
+            playfulGreen,
+            boldPurple
+        )
     }
 }
 

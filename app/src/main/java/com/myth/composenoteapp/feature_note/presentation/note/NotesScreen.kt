@@ -1,5 +1,6 @@
 package com.myth.composenoteapp.feature_note.presentation.note
 
+import android.annotation.SuppressLint
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -17,18 +18,22 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.FloatingActionButton
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
-import androidx.compose.material.SnackbarResult
-import androidx.compose.material.Text
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarResult
+import androidx.compose.material3.Text
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Sort
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Sort
-import androidx.compose.material.rememberScaffoldState
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,26 +42,32 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.myth.composenoteapp.feature_note.presentation.note.components.NoteItem
 import com.myth.composenoteapp.feature_note.presentation.note.components.OrderSection
+import com.myth.composenoteapp.feature_note.presentation.util.Screen
 import kotlinx.coroutines.launch
 
 
+@OptIn(ExperimentalMaterial3Api::class)
+@SuppressLint("UnusedMaterialScaffoldPaddingParameter", "UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun NotesScreen(
     navController: NavController, viewModel: NotesViewModel = hiltViewModel()
 ) {
     val state = viewModel.state.value
-    val scaffoldState = rememberScaffoldState()
+    val snackbarHostState = remember { SnackbarHostState()}
     val scope = rememberCoroutineScope()
 
 
     Scaffold(
+        snackbarHost = { SnackbarHost (snackbarHostState)},
         floatingActionButton = {
             FloatingActionButton(
-                onClick = {}, Modifier.background(MaterialTheme.colors.primary)
+                onClick = {
+                    navController.navigate(Screen.AddEditNoteScreen.route)
+                },
             ) {
                 Icon(imageVector = Icons.Default.Add, contentDescription = "Add Note")
             }
-        }, scaffoldState = scaffoldState
+        },
     ) {
         Column(
             modifier = Modifier
@@ -69,13 +80,13 @@ fun NotesScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Your note", style = MaterialTheme.typography.h4
+                    text = "Your notes", style = MaterialTheme.typography.headlineSmall
                 )
                 IconButton(onClick = {
                     viewModel.onEvent(NotesEvent.ToggleOrderSection)
                 }) {
                     Icon(
-                        imageVector = Icons.Default.Sort, contentDescription = "Sort"
+                        imageVector = Icons.AutoMirrored.Filled.Sort, contentDescription = "Sort"
                     )
 
                 }
@@ -104,11 +115,16 @@ fun NotesScreen(
                         note = note,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .clickable { },
+                            .clickable {
+                                navController.navigate(
+                                    Screen.AddEditNoteScreen.route +
+                                            "?noteId=${note.id}&noteColor=${note.color}"
+                                )
+                            },
                         onDeleteClick = {
                             viewModel.onEvent(NotesEvent.DeleteNote(note))
                             scope.launch {
-                                val result = scaffoldState.snackbarHostState.showSnackbar(
+                                val result = snackbarHostState.showSnackbar(
                                     message = "Note deleted",
                                     actionLabel = "Undo"
                                 )
@@ -118,7 +134,7 @@ fun NotesScreen(
                             }
                         }
                     )
-                    
+
                     Spacer(modifier = Modifier.height(16.dp))
                 }
             }
